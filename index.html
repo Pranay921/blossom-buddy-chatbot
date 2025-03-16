@@ -567,7 +567,28 @@ body {
                 const match = message.match(agePattern);
                 return match ? match[0] : null;
             }
-            
+        
+            // Add a function to validate the age range
+            function isValidAgeRange(ageString) {
+                // Extract numeric value and unit from age string
+                const numericValue = parseInt(ageString.match(/\d+/)[0]);
+                const unit = ageString.toLowerCase();
+                
+                // Check if age is within 0-5 years range
+                if (unit.includes('year') || unit.includes('yr') || unit.includes('y/o') || unit.includes('y')) {
+                    return numericValue <= 5;
+                } else if (unit.includes('month') || unit.includes('mo') || unit.includes('m/o') || unit.includes('m')) {
+                    return numericValue <= 60; // 60 months = 5 years
+                } else if (unit.includes('week') || unit.includes('wk') || unit.includes('w')) {
+                    return numericValue <= 260; // ~260 weeks = 5 years
+                } else if (unit.includes('day') || unit.includes('d')) {
+                    return numericValue <= 1825; // ~1825 days = 5 years
+                }
+                
+                // Default to valid if we can't determine
+                return true;
+            }
+        
             // Create typing indicator element
             function showTypingIndicator() {
                 // Remove existing indicator if there is one
@@ -748,8 +769,25 @@ body {
                     if (extractedAge) {
                         // Add a small delay to make the typing indicator visible
                         await new Promise(resolve => setTimeout(resolve, 800));
-                        childAge = extractedAge;
-                        addMessage(`Thank you. I'll remember that your child is ${childAge}. How can I help your little one today?`, false);
+                        
+                        // Check if age is within valid range (0-5 years)
+                        if (isValidAgeRange(extractedAge)) {
+                            childAge = extractedAge;
+                            addMessage(`Thank you. I'll remember that your child is ${childAge}. How can I help your little one today?`, false);
+                        } else {
+                            addMessage(`I'm sorry, but I'm specialized in helping with children from 0-5 years old. For older children, please consult with a pediatrician or a different resource.`, false);
+                        }
+                        
+                        userInput.disabled = false;
+                        sendButton.disabled = false;
+                        voiceButton.disabled = false;
+                        return;
+                    }
+        
+                    // If we already have an age and it's not valid, remind the user
+                    if (childAge && !isValidAgeRange(childAge)) {
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        addMessage(`I'm sorry, but I can only provide information for children from 0-5 years old. For older children, please consult with a pediatrician or a different resource.`, false);
                         userInput.disabled = false;
                         sendButton.disabled = false;
                         voiceButton.disabled = false;
