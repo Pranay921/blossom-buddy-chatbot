@@ -210,21 +210,83 @@ body {
     fill: #4285f4;
 }
 
+/* Fix the conflicting styles for chat input container */
 .chat-input-container {
-    padding: 20px;
+    padding: 10px;
     border-top: 1px solid #eee;
     display: flex;
-    gap: 10px;
+    gap: 5px;
     align-items: center;
 }
 
 #userInput {
     flex: 1;
-    padding: 12px;
+    padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 25px;
     outline: none;
-    font-size: 1rem;
+    font-size: 0.9rem;
+    min-width: 0; /* Prevents input from overflowing */
+}
+
+#sendButton {
+    padding: 8px 15px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: background-color 0.3s;
+}
+
+#voiceButton {
+    padding: 8px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+/* Improve mobile responsiveness */
+@media screen and (max-width: 480px) {
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+    
+    .chat-header h1 {
+        font-size: 1.2rem;
+    }
+    
+    #sendButton {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .mic-icon {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .message {
+        max-width: 80%;
+        font-size: 0.9rem;
+    }
+    
+    .chat-footer {
+        font-size: 0.8rem;
+    }
 }
 
 #userInput:focus {
