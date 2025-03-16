@@ -395,375 +395,747 @@ body {
     <div id="toast" class="toast"></div>
     
     <script>
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const chatMessages = document.getElementById('chatMessages');
+        //     const userInput = document.getElementById('userInput');
+        //     const sendButton = document.getElementById('sendButton');
+        //     const resetButton = document.getElementById('resetButton');
+        //     const voiceButton = document.getElementById('voiceButton');
+        //     const toast = document.getElementById('toast');
+        //     let sessionId = 'session_' + Date.now();
+        //     let childAge = null;
+        //     let chatHistory = [];
+        //     let currentlySpeaking = null;
+        //     let recognition;
+        //     let isRecording = false;
+        //     let typingIndicator = null;
+        
+        //     // Initialize speech recognition if available
+        //     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        //         recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        //         recognition.continuous = false;
+        //         recognition.interimResults = false;
+        //         recognition.lang = 'en-US';
+                
+        //         recognition.onresult = function(event) {
+        //             const transcript = event.results[0][0].transcript;
+        //             userInput.value = transcript;
+        //             showToast('Voice captured!');
+        //             // Automatically send the message after a short delay
+        //             setTimeout(() => {
+        //                 sendMessage();
+        //             }, 500);
+        //         };
+                
+        //         recognition.onerror = function(event) {
+        //             console.error('Speech recognition error', event.error);
+        //             showToast('Could not recognize speech. Try again.');
+        //             stopRecording();
+        //         };
+                
+        //         recognition.onend = function() {
+        //             stopRecording();
+        //         };
+        //     }
+            
+        //     function startRecording() {
+        //         if (recognition) {
+        //             try {
+        //                 recognition.start();
+        //                 isRecording = true;
+        //                 voiceButton.classList.add('recording');
+        //                 showToast('Listening...');
+        //             } catch (e) {
+        //                 console.error('Speech recognition error:', e);
+        //                 showToast('Could not start recording. Try again.');
+        //             }
+        //         } else {
+        //             showToast('Speech recognition not supported in your browser');
+        //         }
+        //     }
+            
+        //     function stopRecording() {
+        //         if (recognition && isRecording) {
+        //             recognition.stop();
+        //             isRecording = false;
+        //             voiceButton.classList.remove('recording');
+        //         }
+        //     }
+            
+        //     function showToast(message) {
+        //         toast.textContent = message;
+        //         toast.classList.add('show');
+        //         setTimeout(() => {
+        //             toast.classList.remove('show');
+        //         }, 3000);
+        //     }
+        
+        //     // Add age verification regex
+        //     const agePattern = /\b(?:\d+\s*(?:year|month|week|day|yr|mo|y|m)s?\s*(?:old)?|\d+\s*y\/o|\d+\s*m\/o)\b/i;
+        
+        //     function checkForAge(message) {
+        //         const match = message.match(agePattern);
+        //         return match ? match[0] : null;
+        //     }
+            
+        //     // Create typing indicator element
+        //     function showTypingIndicator() {
+        //         // Remove existing indicator if there is one
+        //         removeTypingIndicator();
+                
+        //         // Create the typing indicator
+        //         typingIndicator = document.createElement('div');
+        //         typingIndicator.className = 'typing-indicator';
+                
+        //         // Create the bouncing dots
+        //         for (let i = 0; i < 3; i++) {
+        //             const dot = document.createElement('div');
+        //             dot.className = 'typing-dot';
+        //             typingIndicator.appendChild(dot);
+        //         }
+                
+        //         chatMessages.appendChild(typingIndicator);
+        //         chatMessages.scrollTop = chatMessages.scrollHeight;
+        //     }
+            
+        //     function removeTypingIndicator() {
+        //         if (typingIndicator && typingIndicator.parentNode) {
+        //             typingIndicator.parentNode.removeChild(typingIndicator);
+        //             typingIndicator = null;
+        //         }
+        //     }
+
+        //     function addMessage(message, isUser) {
+        //         // Remove typing indicator when adding a bot message
+        //         if (!isUser) {
+        //             removeTypingIndicator();
+        //         }
+                
+        //         const messageDiv = document.createElement('div');
+        //         messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+        //         messageDiv.textContent = message;
+                
+        //         // Add buttons to bot messages
+        //         if (!isUser) {
+        //             // Copy button
+        //             const copyButton = document.createElement('button');
+        //             copyButton.className = 'message-button copy-button';
+        //             copyButton.setAttribute('title', 'Copy message');
+        //             copyButton.innerHTML = `<svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        //                 <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+        //             </svg>`;
+        //             copyButton.addEventListener('click', () => copyMessageText(message, copyButton));
+        //             messageDiv.appendChild(copyButton);
+                    
+        //             // Speaker button for text-to-speech
+        //             const speakerButton = document.createElement('button');
+        //             speakerButton.className = 'message-button speaker-button';
+        //             speakerButton.setAttribute('title', 'Listen to message');
+        //             speakerButton.innerHTML = `<svg class="speaker-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        //                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        //             </svg>`;
+        //             speakerButton.addEventListener('click', () => speakMessage(message, speakerButton));
+        //             messageDiv.appendChild(speakerButton);
+        //         }
+                
+        //         chatMessages.appendChild(messageDiv);
+                
+        //         // Set a brief delay before scrolling to make animation visible
+        //         setTimeout(() => {
+        //             chatMessages.scrollTop = chatMessages.scrollHeight;
+        //         }, 100);
+        
+        //         // Store message in chat history
+        //         chatHistory.push({
+        //             role: isUser ? 'user' : 'assistant',
+        //             content: message,
+        //             timestamp: new Date().toISOString()
+        //         });
+        //     }
+            
+        //     function copyMessageText(text, button) {
+        //         navigator.clipboard.writeText(text).then(() => {
+        //             showNotification(button, 'Copied!');
+        //         }).catch(err => {
+        //             console.error('Could not copy text: ', err);
+        //             showNotification(button, 'Copy failed!');
+        //         });
+        //     }
+            
+        //     function speakMessage(text, button) {
+        //         // Stop any currently speaking message
+        //         if (window.speechSynthesis.speaking) {
+        //             window.speechSynthesis.cancel();
+        //             if (currentlySpeaking) {
+        //                 currentlySpeaking.classList.remove('speaker-active');
+        //             }
+        //         }
+                
+        //         // If we just stopped this button's speech, don't start it again
+        //         if (currentlySpeaking === button) {
+        //             currentlySpeaking = null;
+        //             return;
+        //         }
+                
+        //         // Create speech synthesis utterance
+        //         const utterance = new SpeechSynthesisUtterance(text);
+                
+        //         // Highlight the active speaker button
+        //         button.classList.add('speaker-active');
+        //         currentlySpeaking = button;
+                
+        //         // Add event for when speaking ends
+        //         utterance.onend = () => {
+        //             button.classList.remove('speaker-active');
+        //             currentlySpeaking = null;
+        //         };
+                
+        //         // Handle errors
+        //         utterance.onerror = () => {
+        //             button.classList.remove('speaker-active');
+        //             currentlySpeaking = null;
+        //             showNotification(button, 'Speech failed!');
+        //         };
+                
+        //         // Start speaking
+        //         window.speechSynthesis.speak(utterance);
+        //     }
+            
+        //     function showNotification(button, text) {
+        //         // Create notification element
+        //         const notification = document.createElement('span');
+        //         notification.className = 'notification';
+        //         notification.textContent = text;
+        //         button.parentNode.appendChild(notification);
+                
+        //         // Position the notification
+        //         notification.style.right = button.classList.contains('copy-button') ? '65px' : '35px';
+        //         notification.style.top = '50%';
+        //         notification.style.transform = 'translateY(-50%)';
+                
+        //         // Show and hide the notification
+        //         setTimeout(() => {
+        //             notification.classList.add('show');
+        //             setTimeout(() => {
+        //                 notification.classList.remove('show');
+        //                 setTimeout(() => {
+        //                     notification.remove();
+        //                 }, 300);
+        //             }, 1500);
+        //         }, 10);
+        //     }
+        
+        //     // Update the sendMessage function
+        //     async function sendMessage() {
+        //         const message = userInput.value.trim();
+        //         if (message === '') return;
+        
+        //         try {
+        //             userInput.disabled = true;
+        //             sendButton.disabled = true;
+        //             voiceButton.disabled = true;
+        
+        //             addMessage(message, true);
+        //             userInput.value = '';
+                    
+        //             // Show typing indicator while waiting for response
+        //             showTypingIndicator();
+        
+        //             // Check for greetings and no age provided
+        //             const greetings = ['hello', 'hi', 'hey', 'hola', 'greetings'];
+        //             if (!childAge && greetings.some(greeting => message.toLowerCase().includes(greeting))) {
+        //                 // Add a small delay to make the typing indicator visible
+        //                 await new Promise(resolve => setTimeout(resolve, 800));
+        //                 addMessage("Hello! To help you better, could you please tell me your child's age?", false);
+        //                 userInput.disabled = false;
+        //                 sendButton.disabled = false;
+        //                 voiceButton.disabled = false;
+        //                 return;
+        //             }
+        
+        //             // Check if age is mentioned in the message
+        //             const extractedAge = checkForAge(message);
+        //             if (extractedAge) {
+        //                 // Add a small delay to make the typing indicator visible
+        //                 await new Promise(resolve => setTimeout(resolve, 800));
+        //                 childAge = extractedAge;
+        //                 addMessage(`Thank you. I'll remember that your child is ${childAge}. How can I help your little one today?`, false);
+        //                 userInput.disabled = false;
+        //                 sendButton.disabled = false;
+        //                 voiceButton.disabled = false;
+        //                 return;
+        //             }
+        
+        //             // Prepare the message with context
+        //             let contextMessage = message;
+        //             if (childAge) {
+        //                 contextMessage = `Child's age: ${childAge}. Question: ${message}`;
+        //             }
+        
+        //             const response = await fetch('http://localhost:5000/chat', {
+        //                 method: 'POST',
+        //                 headers: {
+        //                     'Content-Type': 'application/json',
+        //                     'Accept': 'application/json'
+        //                 },
+        //                 body: JSON.stringify({ 
+        //                     message: contextMessage,
+        //                     session_id: sessionId,
+        //                     child_age: childAge,
+        //                     chat_history: chatHistory.slice(-5)
+        //                 }),
+        //             });
+        
+        //             if (!response.ok) {
+        //                 throw new Error(`HTTP error! status: ${response.status}`);
+        //             }
+        
+        //             const data = await response.json();
+        //             if (data.error) {
+        //                 console.error('Server error:', data.error);
+        //                 addMessage('Error: ' + data.error, false);
+        //             } else {
+        //                 addMessage(data.response, false);
+        //             }
+        //         } catch (error) {
+        //             console.error('Error:', error);
+        //             removeTypingIndicator();
+        //             addMessage('Sorry, something went wrong. Please try again.', false);
+        //         } finally {
+        //             // Re-enable input
+        //             userInput.disabled = false;
+        //             sendButton.disabled = false;
+        //             voiceButton.disabled = false;
+        //             userInput.focus();
+        //         }
+        //     }
+            
+        //     function resetChat() {
+        //         // Stop any speech recognition that might be happening
+        //         if (isRecording) {
+        //             stopRecording();
+        //         }
+                
+        //         // Stop any text-to-speech that might be happening
+        //         if (window.speechSynthesis.speaking) {
+        //             window.speechSynthesis.cancel();
+        //         }
+                
+        //         // Remove typing indicator if it exists
+        //         removeTypingIndicator();
+                
+        //         // Clear chat messages
+        //         chatMessages.innerHTML = '';
+                
+        //         // Reset variables
+        //         sessionId = 'session_' + Date.now();
+        //         childAge = null;
+        //         chatHistory = [];
+        //         currentlySpeaking = null;
+                
+        //         // Add welcome message
+        //         addMessage("Hi! I'm Blossom Buddy, your pediatric care assistant. How can I help you today?", false);
+                
+        //         // Focus on input
+        //         userInput.value = '';
+        //         userInput.focus();
+                
+        //         // Show notification
+        //         showToast('Chat reset!');
+        //     }
+        
+        //     // Add event listeners
+        //     resetButton.addEventListener('click', resetChat);
+        //     sendButton.addEventListener('click', sendMessage);
+        //     userInput.addEventListener('keypress', (e) => {
+        //         if (e.key === 'Enter') {
+        //             sendMessage();
+        //         }
+        //     });
+            
+        //     voiceButton.addEventListener('click', () => {
+        //         if (isRecording) {
+        //             stopRecording();
+        //         } else {
+        //             startRecording();
+        //         }
+        //     });
+            
+        //     // Add welcome message
+        //     addMessage("Hi! I'm Blossom Buddy, your pediatric care assistant. How can I help you today?", false);
+        // });
         document.addEventListener('DOMContentLoaded', () => {
-            const chatMessages = document.getElementById('chatMessages');
-            const userInput = document.getElementById('userInput');
-            const sendButton = document.getElementById('sendButton');
-            const resetButton = document.getElementById('resetButton');
-            const voiceButton = document.getElementById('voiceButton');
-            const toast = document.getElementById('toast');
-            let sessionId = 'session_' + Date.now();
-            let childAge = null;
-            let chatHistory = [];
-            let currentlySpeaking = null;
-            let recognition;
-            let isRecording = false;
-            let typingIndicator = null;
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    const resetButton = document.getElementById('resetButton');
+    const voiceButton = document.getElementById('voiceButton');
+    const toast = document.getElementById('toast');
+    let sessionId = 'session_' + Date.now();
+    let childAge = null;
+    let chatHistory = [];
+    let currentlySpeaking = null;
+    let recognition;
+    let isRecording = false;
+    let typingIndicator = null;
+
+    // Initialize speech recognition if available
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
         
-            // Initialize speech recognition if available
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                recognition.lang = 'en-US';
-                
-                recognition.onresult = function(event) {
-                    const transcript = event.results[0][0].transcript;
-                    userInput.value = transcript;
-                    showToast('Voice captured!');
-                    // Automatically send the message after a short delay
-                    setTimeout(() => {
-                        sendMessage();
-                    }, 500);
-                };
-                
-                recognition.onerror = function(event) {
-                    console.error('Speech recognition error', event.error);
-                    showToast('Could not recognize speech. Try again.');
-                    stopRecording();
-                };
-                
-                recognition.onend = function() {
-                    stopRecording();
-                };
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            showToast('Voice captured!');
+            // Automatically send the message after a short delay
+            setTimeout(() => {
+                sendMessage();
+            }, 500);
+        };
+        
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error', event.error);
+            showToast('Could not recognize speech. Try again.');
+            stopRecording();
+        };
+        
+        recognition.onend = function() {
+            stopRecording();
+        };
+    }
+    
+    function startRecording() {
+        if (recognition) {
+            try {
+                recognition.start();
+                isRecording = true;
+                voiceButton.classList.add('recording');
+                showToast('Listening...');
+            } catch (e) {
+                console.error('Speech recognition error:', e);
+                showToast('Could not start recording. Try again.');
             }
+        } else {
+            showToast('Speech recognition not supported in your browser');
+        }
+    }
+    
+    function stopRecording() {
+        if (recognition && isRecording) {
+            recognition.stop();
+            isRecording = false;
+            voiceButton.classList.remove('recording');
+        }
+    }
+    
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    // Add age verification regex
+    const agePattern = /\b(?:\d+\s*(?:year|month|week|day|yr|mo|y|m)s?\s*(?:old)?|\d+\s*y\/o|\d+\s*m\/o)\b/i;
+
+    function checkForAge(message) {
+        const match = message.match(agePattern);
+        return match ? match[0] : null;
+    }
+    
+    // Create typing indicator element
+    function showTypingIndicator() {
+        // Remove existing indicator if there is one
+        removeTypingIndicator();
+        
+        // Create the typing indicator
+        typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        
+        // Create the bouncing dots
+        for (let i = 0; i < 3; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'typing-dot';
+            typingIndicator.appendChild(dot);
+        }
+        
+        chatMessages.appendChild(typingIndicator);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+        if (typingIndicator && typingIndicator.parentNode) {
+            typingIndicator.parentNode.removeChild(typingIndicator);
+            typingIndicator = null;
+        }
+    }
+
+    function addMessage(message, isUser) {
+        // Remove typing indicator when adding a bot message
+        if (!isUser) {
+            removeTypingIndicator();
+        }
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+        messageDiv.textContent = message;
+        
+        // Add buttons to bot messages
+        if (!isUser) {
+            // Copy button
+            const copyButton = document.createElement('button');
+            copyButton.className = 'message-button copy-button';
+            copyButton.setAttribute('title', 'Copy message');
+            copyButton.innerHTML = `<svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+            </svg>`;
+            copyButton.addEventListener('click', () => copyMessageText(message, copyButton));
+            messageDiv.appendChild(copyButton);
             
-            function startRecording() {
-                if (recognition) {
-                    try {
-                        recognition.start();
-                        isRecording = true;
-                        voiceButton.classList.add('recording');
-                        showToast('Listening...');
-                    } catch (e) {
-                        console.error('Speech recognition error:', e);
-                        showToast('Could not start recording. Try again.');
-                    }
-                } else {
-                    showToast('Speech recognition not supported in your browser');
-                }
+            // Speaker button for text-to-speech
+            const speakerButton = document.createElement('button');
+            speakerButton.className = 'message-button speaker-button';
+            speakerButton.setAttribute('title', 'Listen to message');
+            speakerButton.innerHTML = `<svg class="speaker-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>`;
+            speakerButton.addEventListener('click', () => speakMessage(message, speakerButton));
+            messageDiv.appendChild(speakerButton);
+        }
+        
+        chatMessages.appendChild(messageDiv);
+        
+        // Set a brief delay before scrolling to make animation visible
+        setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 100);
+
+        // Store message in chat history
+        chatHistory.push({
+            role: isUser ? 'user' : 'assistant',
+            content: message,
+            timestamp: new Date().toISOString()
+        });
+    }
+    
+    function copyMessageText(text, button) {
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification(button, 'Copied!');
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+            showNotification(button, 'Copy failed!');
+        });
+    }
+    
+    function speakMessage(text, button) {
+        // Stop any currently speaking message
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+            if (currentlySpeaking) {
+                currentlySpeaking.classList.remove('speaker-active');
             }
-            
-            function stopRecording() {
-                if (recognition && isRecording) {
-                    recognition.stop();
-                    isRecording = false;
-                    voiceButton.classList.remove('recording');
-                }
-            }
-            
-            function showToast(message) {
-                toast.textContent = message;
-                toast.classList.add('show');
+        }
+        
+        // If we just stopped this button's speech, don't start it again
+        if (currentlySpeaking === button) {
+            currentlySpeaking = null;
+            return;
+        }
+        
+        // Create speech synthesis utterance
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Highlight the active speaker button
+        button.classList.add('speaker-active');
+        currentlySpeaking = button;
+        
+        // Add event for when speaking ends
+        utterance.onend = () => {
+            button.classList.remove('speaker-active');
+            currentlySpeaking = null;
+        };
+        
+        // Handle errors
+        utterance.onerror = () => {
+            button.classList.remove('speaker-active');
+            currentlySpeaking = null;
+            showNotification(button, 'Speech failed!');
+        };
+        
+        // Start speaking
+        window.speechSynthesis.speak(utterance);
+    }
+    
+    function showNotification(button, text) {
+        // Create notification element
+        const notification = document.createElement('span');
+        notification.className = 'notification';
+        notification.textContent = text;
+        button.parentNode.appendChild(notification);
+        
+        // Position the notification
+        notification.style.right = button.classList.contains('copy-button') ? '65px' : '35px';
+        notification.style.top = '50%';
+        notification.style.transform = 'translateY(-50%)';
+        
+        // Show and hide the notification
+        setTimeout(() => {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
                 setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }
-        
-            // Add age verification regex
-            const agePattern = /\b(?:\d+\s*(?:year|month|week|day|yr|mo|y|m)s?\s*(?:old)?|\d+\s*y\/o|\d+\s*m\/o)\b/i;
-        
-            function checkForAge(message) {
-                const match = message.match(agePattern);
-                return match ? match[0] : null;
-            }
+                    notification.remove();
+                }, 300);
+            }, 1500);
+        }, 10);
+    }
+
+    // Update the sendMessage function for proper API URL handling in production
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (message === '') return;
+
+        try {
+            userInput.disabled = true;
+            sendButton.disabled = true;
+            voiceButton.disabled = true;
+
+            addMessage(message, true);
+            userInput.value = '';
             
-            // Create typing indicator element
-            function showTypingIndicator() {
-                // Remove existing indicator if there is one
-                removeTypingIndicator();
-                
-                // Create the typing indicator
-                typingIndicator = document.createElement('div');
-                typingIndicator.className = 'typing-indicator';
-                
-                // Create the bouncing dots
-                for (let i = 0; i < 3; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'typing-dot';
-                    typingIndicator.appendChild(dot);
-                }
-                
-                chatMessages.appendChild(typingIndicator);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-            
-            function removeTypingIndicator() {
-                if (typingIndicator && typingIndicator.parentNode) {
-                    typingIndicator.parentNode.removeChild(typingIndicator);
-                    typingIndicator = null;
-                }
+            // Show typing indicator while waiting for response
+            showTypingIndicator();
+
+            // Check for greetings and no age provided
+            const greetings = ['hello', 'hi', 'hey', 'hola', 'greetings'];
+            if (!childAge && greetings.some(greeting => message.toLowerCase().includes(greeting))) {
+                // Add a small delay to make the typing indicator visible
+                await new Promise(resolve => setTimeout(resolve, 800));
+                addMessage("Hello! To help you better, could you please tell me your child's age?", false);
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                voiceButton.disabled = false;
+                return;
             }
 
-            function addMessage(message, isUser) {
-                // Remove typing indicator when adding a bot message
-                if (!isUser) {
-                    removeTypingIndicator();
-                }
-                
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-                messageDiv.textContent = message;
-                
-                // Add buttons to bot messages
-                if (!isUser) {
-                    // Copy button
-                    const copyButton = document.createElement('button');
-                    copyButton.className = 'message-button copy-button';
-                    copyButton.setAttribute('title', 'Copy message');
-                    copyButton.innerHTML = `<svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                    </svg>`;
-                    copyButton.addEventListener('click', () => copyMessageText(message, copyButton));
-                    messageDiv.appendChild(copyButton);
-                    
-                    // Speaker button for text-to-speech
-                    const speakerButton = document.createElement('button');
-                    speakerButton.className = 'message-button speaker-button';
-                    speakerButton.setAttribute('title', 'Listen to message');
-                    speakerButton.innerHTML = `<svg class="speaker-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                    </svg>`;
-                    speakerButton.addEventListener('click', () => speakMessage(message, speakerButton));
-                    messageDiv.appendChild(speakerButton);
-                }
-                
-                chatMessages.appendChild(messageDiv);
-                
-                // Set a brief delay before scrolling to make animation visible
-                setTimeout(() => {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 100);
-        
-                // Store message in chat history
-                chatHistory.push({
-                    role: isUser ? 'user' : 'assistant',
-                    content: message,
-                    timestamp: new Date().toISOString()
-                });
+            // Check if age is mentioned in the message
+            const extractedAge = checkForAge(message);
+            if (extractedAge) {
+                // Add a small delay to make the typing indicator visible
+                await new Promise(resolve => setTimeout(resolve, 800));
+                childAge = extractedAge;
+                addMessage(`Thank you. I'll remember that your child is ${childAge}. How can I help your little one today?`, false);
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                voiceButton.disabled = false;
+                return;
             }
-            
-            function copyMessageText(text, button) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showNotification(button, 'Copied!');
-                }).catch(err => {
-                    console.error('Could not copy text: ', err);
-                    showNotification(button, 'Copy failed!');
-                });
+
+            // Prepare the message with context
+            let contextMessage = message;
+            if (childAge) {
+                contextMessage = `Child's age: ${childAge}. Question: ${message}`;
             }
-            
-            function speakMessage(text, button) {
-                // Stop any currently speaking message
-                if (window.speechSynthesis.speaking) {
-                    window.speechSynthesis.cancel();
-                    if (currentlySpeaking) {
-                        currentlySpeaking.classList.remove('speaker-active');
-                    }
-                }
-                
-                // If we just stopped this button's speech, don't start it again
-                if (currentlySpeaking === button) {
-                    currentlySpeaking = null;
-                    return;
-                }
-                
-                // Create speech synthesis utterance
-                const utterance = new SpeechSynthesisUtterance(text);
-                
-                // Highlight the active speaker button
-                button.classList.add('speaker-active');
-                currentlySpeaking = button;
-                
-                // Add event for when speaking ends
-                utterance.onend = () => {
-                    button.classList.remove('speaker-active');
-                    currentlySpeaking = null;
-                };
-                
-                // Handle errors
-                utterance.onerror = () => {
-                    button.classList.remove('speaker-active');
-                    currentlySpeaking = null;
-                    showNotification(button, 'Speech failed!');
-                };
-                
-                // Start speaking
-                window.speechSynthesis.speak(utterance);
-            }
-            
-            function showNotification(button, text) {
-                // Create notification element
-                const notification = document.createElement('span');
-                notification.className = 'notification';
-                notification.textContent = text;
-                button.parentNode.appendChild(notification);
-                
-                // Position the notification
-                notification.style.right = button.classList.contains('copy-button') ? '65px' : '35px';
-                notification.style.top = '50%';
-                notification.style.transform = 'translateY(-50%)';
-                
-                // Show and hide the notification
-                setTimeout(() => {
-                    notification.classList.add('show');
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                        setTimeout(() => {
-                            notification.remove();
-                        }, 300);
-                    }, 1500);
-                }, 10);
-            }
-        
-            // Update the sendMessage function
-            async function sendMessage() {
-                const message = userInput.value.trim();
-                if (message === '') return;
-        
-                try {
-                    userInput.disabled = true;
-                    sendButton.disabled = true;
-                    voiceButton.disabled = true;
-        
-                    addMessage(message, true);
-                    userInput.value = '';
-                    
-                    // Show typing indicator while waiting for response
-                    showTypingIndicator();
-        
-                    // Check for greetings and no age provided
-                    const greetings = ['hello', 'hi', 'hey', 'hola', 'greetings'];
-                    if (!childAge && greetings.some(greeting => message.toLowerCase().includes(greeting))) {
-                        // Add a small delay to make the typing indicator visible
-                        await new Promise(resolve => setTimeout(resolve, 800));
-                        addMessage("Hello! To help you better, could you please tell me your child's age?", false);
-                        userInput.disabled = false;
-                        sendButton.disabled = false;
-                        voiceButton.disabled = false;
-                        return;
-                    }
-        
-                    // Check if age is mentioned in the message
-                    const extractedAge = checkForAge(message);
-                    if (extractedAge) {
-                        // Add a small delay to make the typing indicator visible
-                        await new Promise(resolve => setTimeout(resolve, 800));
-                        childAge = extractedAge;
-                        addMessage(`Thank you. I'll remember that your child is ${childAge}. How can I help your little one today?`, false);
-                        userInput.disabled = false;
-                        sendButton.disabled = false;
-                        voiceButton.disabled = false;
-                        return;
-                    }
-        
-                    // Prepare the message with context
-                    let contextMessage = message;
-                    if (childAge) {
-                        contextMessage = `Child's age: ${childAge}. Question: ${message}`;
-                    }
-        
-                    const response = await fetch('http://localhost:5000/chat', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ 
-                            message: contextMessage,
-                            session_id: sessionId,
-                            child_age: childAge,
-                            chat_history: chatHistory.slice(-5)
-                        }),
-                    });
-        
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-        
-                    const data = await response.json();
-                    if (data.error) {
-                        console.error('Server error:', data.error);
-                        addMessage('Error: ' + data.error, false);
-                    } else {
-                        addMessage(data.response, false);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    removeTypingIndicator();
-                    addMessage('Sorry, something went wrong. Please try again.', false);
-                } finally {
-                    // Re-enable input
-                    userInput.disabled = false;
-                    sendButton.disabled = false;
-                    voiceButton.disabled = false;
-                    userInput.focus();
-                }
-            }
-            
-            function resetChat() {
-                // Stop any speech recognition that might be happening
-                if (isRecording) {
-                    stopRecording();
-                }
-                
-                // Stop any text-to-speech that might be happening
-                if (window.speechSynthesis.speaking) {
-                    window.speechSynthesis.cancel();
-                }
-                
-                // Remove typing indicator if it exists
-                removeTypingIndicator();
-                
-                // Clear chat messages
-                chatMessages.innerHTML = '';
-                
-                // Reset variables
-                sessionId = 'session_' + Date.now();
-                childAge = null;
-                chatHistory = [];
-                currentlySpeaking = null;
-                
-                // Add welcome message
-                addMessage("Hi! I'm Blossom Buddy, your pediatric care assistant. How can I help you today?", false);
-                
-                // Focus on input
-                userInput.value = '';
-                userInput.focus();
-                
-                // Show notification
-                showToast('Chat reset!');
-            }
-        
-            // Add event listeners
-            resetButton.addEventListener('click', resetChat);
-            sendButton.addEventListener('click', sendMessage);
-            userInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
+
+            // Use a relative URL for the API endpoint instead of hardcoding localhost
+            const apiUrl = '/chat';
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    message: contextMessage,
+                    session_id: sessionId,
+                    child_age: childAge,
+                    chat_history: chatHistory.slice(-5)
+                }),
             });
-            
-            voiceButton.addEventListener('click', () => {
-                if (isRecording) {
-                    stopRecording();
-                } else {
-                    startRecording();
-                }
-            });
-            
-            // Add welcome message
-            addMessage("Hi! I'm Blossom Buddy, your pediatric care assistant. How can I help you today?", false);
-        });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.error) {
+                console.error('Server error:', data.error);
+                addMessage('Error: ' + data.error, false);
+            } else {
+                addMessage(data.response, false);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            removeTypingIndicator();
+            addMessage('Sorry, something went wrong. Please try again.' + (error.message ? ` (${error.message})` : ''), false);
+        } finally {
+            // Re-enable input
+            userInput.disabled = false;
+            sendButton.disabled = false;
+            voiceButton.disabled = false;
+            userInput.focus();
+        }
+    }
+    
+    function resetChat() {
+        // Stop any speech recognition that might be happening
+        if (isRecording) {
+            stopRecording();
+        }
+        
+        // Stop any text-to-speech that might be happening
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+        
+        // Remove typing indicator if it exists
+        removeTypingIndicator();
+        
+        // Clear chat messages
+        chatMessages.innerHTML = '';
+        
+        // Reset variables
+        sessionId = 'session_' + Date.now();
+        childAge = null;
+        chatHistory = [];
+        currentlySpeaking = null;
+        
+        // Add welcome message
+        addMessage("Hi! I'm Blossom Buddy, your pediatric care assistant. How can I help you today?", false);
+        
+        // Focus on input
+        userInput.value = '';
+        userInput.focus();
+        
+        // Show notification
+        showToast('Chat reset!');
+    }
+
+    // Add event listeners
+    resetButton.addEventListener('click', resetChat);
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    voiceButton.addEventListener('click', () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    });
+    
+    // Add welcome message
+    addMessage("Hi! I'm Blossom Buddy, your pediatric care assistant. How can I help you today?", false);
+});
     </script>
 </body>
 </html>
