@@ -23,15 +23,43 @@ body {
     align-items: center;
 }
 
+/* Adjust the chat container height */
 .chat-container {
     width: 90%;
     max-width: 800px;
-    height: 80vh;
+    height: 80vh; /* Keep this the same */
+    max-height: 700px; /* Add max-height to prevent excessive height */
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+}
+
+/* Adjust media query for mobile */
+@media screen and (max-width: 480px) {
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh; /* Allow full height on mobile */
+        border-radius: 0;
+        max-width: 100%;
+    }
+    
+    /* Make chat messages area more compact on mobile */
+    .chat-messages {
+        padding: 15px 10px;
+    }
+    
+    /* Make input area more compact */
+    .chat-input-container {
+        padding: 8px;
+    }
+    
+    /* Make footer more compact */
+    .chat-footer {
+        padding: 8px 15px;
+    }
 }
 
 .chat-header {
